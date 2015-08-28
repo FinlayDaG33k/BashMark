@@ -5,7 +5,7 @@ This tool has been made to test a VPS and now has been put on the Github for you
 # Usage
 `chmod +x BashMark.sh`  
 `./BashMark.sh` OR `./BashMark.sh >> output.txt`  
-Wait 5-10Minutes (Depends on our machine)  
+Wait 5-10Minutes (Depends on your machine)  
 View Results  
 
 
