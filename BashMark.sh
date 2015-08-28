@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '
-
+_version='1.1'
 
 clear
 
@@ -116,6 +116,7 @@ echo "==== System Information ===="
 echo
 
 date
+echo "BashMark Version: ${_version}"
 echo "CPU model : $cname"
 echo "Number of cores : $cores"
 echo "CPU frequency : $freq MHz"
