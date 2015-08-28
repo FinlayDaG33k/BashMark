@@ -26,12 +26,6 @@ SOFTWARE.
 
 
 clear
-cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo )
-cores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
-freq=$( awk -F: ' /cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo )
-tram=$( free -m | awk 'NR==2 {print $2}' )
-swap=$( free -m | awk 'NR==4 {print $2}' )
-up=$(uptime|awk '{ $1=$2=$(NF-6)=$(NF-5)=$(NF-4)=$(NF-3)=$(NF-2)=$(NF-1)=$NF=""; print }')
 
 
 echo "========== FinlayDaG33k BashMark =========="
@@ -40,86 +34,79 @@ echo
 CURL=$(which curl) || eval "echo 'Please install curl'; exit 1"
 CURL=$(which openssl) || eval "echo 'Please install openssl'; exit 1"
 
+# Declare all functions
+downloadfile(){
+               wget -O /dev/null $1 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}'
+           }
+           
+txtcomplete(){
+              echo " Complete"
+}
+
+# Get CPU Info
+cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo )
+cores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
+freq=$( awk -F: ' /cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo )
+tram=$( free -m | awk 'NR==2 {print $2}' )
+swap=$( free -m | awk 'NR==4 {print $2}' )
+up=$(uptime|awk '{ $1=$2=$(NF-6)=$(NF-5)=$(NF-4)=$(NF-3)=$(NF-2)=$(NF-1)=$NF=""; print }')
+
+# Test Download speeds
+
 echo -n "Testing Cachefly..."
-cachefly=$( wget -O /dev/null http://cachefly.cachefly.net/100mb.test 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+cachefly=$(downloadfile http://cachefly.cachefly.net/100mb.test)
+txtcomplete
 
 echo -n "Testing Coloat, Atlanta, GA..."
-coloatatl=$( wget -O /dev/null http://speed.atl.coloat.com/100mb.test 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+coloatatl=$(downloadfile http://speed.atl.coloat.com/100mb.test)
+txtcomplete
 
 echo -n "Testing Softlayer, Dallas, TX..."
-sldltx=$( wget -O /dev/null http://speedtest.dal05.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+sldltx=$(downloadfile http://speedtest.dal05.softlayer.com/downloads/test100.zip)
+txtcomplete
 
 echo -n "Testing Linode, Tokyo, JP..."
-linodejp=$( wget -O /dev/null http://speedtest.tokyo.linode.com/100MB-tokyo.bin 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+linodejp=$(downloadfile http://speedtest.tokyo.linode.com/100MB-tokyo.bin)
+txtcomplete
 
 echo -n "Testing i3d.net, Rotterdam, NL..."
-i3d=$( wget -O /dev/null http://mirror.i3d.net/100mb.bin 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+i3d=$(downloadfile http://mirror.i3d.net/100mb.bin)
+txtcomplete
 
 echo -n "Testing Linode, London, UK..."
-linodeuk=$( wget -O /dev/null http://speedtest.london.linode.com/100MB-london.bin 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+linodeuk=$(downloadfile http://speedtest.london.linode.com/100MB-london.bin)
+txtcomplete
 
 echo -n "Testing Leaseweb, Haarlem, NL..."
-leaseweb=$( wget -O /dev/null http://mirror.leaseweb.com/speedtest/100mb.bin 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+leaseweb=$(downloadfile http://mirror.leaseweb.com/speedtest/100mb.bin)
+txtcomplete
 
 echo -n "Testing Softlayer, Singapore..."
-slsg=$( wget -O /dev/null http://speedtest.sng01.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+slsg=$(downloadfile http://speedtest.sng01.softlayer.com/downloads/test100.zip)
+txtcomplete
 
 echo -n "Testing Softlayer, Seattle, WA..."
-slwa=$( wget -O /dev/null http://speedtest.sea01.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+slwa=$(downloadfile http://speedtest.sea01.softlayer.com/downloads/test100.zip)
+txtcomplete
 
 echo -n "Testing Softlayer, San Jose, CA..."
-slsjc=$( wget -O /dev/null http://speedtest.sjc01.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+slsjc=$(downloadfile http://speedtest.sjc01.softlayer.com/downloads/test100.zip)
+txtcomplete
 
 echo -n "Testing Softlayer, Washington, DC..."
-slwdc=$( wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
-echo " Complete"
+slwdc=$(downloadfile http://speedtest.wdc01.softlayer.com/downloads/test100.zip)
+txtcomplete
 
 echo
-echo "Starting CPU Tests!"
-
-echo -n "Testing SHA256..."
-sha256=$(openssl speed sha256 2>/dev/null | tail -n +6)
-echo " Complete"
-
-echo -n "Testing MD5..."
-md5=$(openssl speed md5 2>/dev/null | tail -n +6)
-echo " Complete"
-
-echo -n "Testing RSA..."
-rsa=$(openssl speed rsa 2>/dev/null | tail -n +6)
-echo " Complete"
-
-echo -n "Testing AES-128-CBC..."
-aes128cbc=$(openssl speed aes-128-cbc 2>/dev/null | tail -n +6)
-echo " Complete"
-
-echo -n "Testing AES-256-CBC..."
-aes256cbc=$(openssl speed aes-256-cbc 2>/dev/null | tail -n +6)
-echo " Complete"
-
-echo -n "Testing ECDSAP256..."
-ecdsap256=$(openssl speed ecdsap256 2>/dev/null | tail -n +6)
-echo " Complete"
-
-echo -n "Testing ECDHP256..."
-ecdhp256=$(openssl speed ecdhp256 2>/dev/null | tail -n +6)
-echo " Complete"
+echo-n "Starting CPU Tests (This may take a while)..."
+openssl=$(openssl speed ecdsap256 ecdhp256 aes-256-cbc aes-128-cbc rsa md5 sha256 2>/dev/null | tail -n +6)
+txtcomplete
 
 echo
 
 echo -n "Running I/O Tests..."
 io=$( ( dd if=/dev/zero of=test_$$ bs=64k count=16k conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' )
-echo " Complete"
+txtcomplete
 
 echo "Tests Complete!" 
 echo "Results Below!"
@@ -140,13 +127,8 @@ echo
 echo "==== Sytem Performance ===="
 echo
 
-echo "$sha256"
-echo "$md5"
-echo "$rsa"
-echo "$aes256cbc"
-echo "$aes256cbc"
-echo "$ecdsap256"
-echo "$ecdhp256"
+echo "$openssl"
+
 echo "I/O speed : $io"
 
 echo
