@@ -84,7 +84,7 @@ echo -n "Testing Softlayer, Washington, DC..."
 slwdc=$( wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
 echo " Complete"
 
-dcho
+wcho
 echo "Starting CPU Tests!"
 
 echo -n "Testing SHA256..."
