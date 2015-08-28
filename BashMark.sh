@@ -84,8 +84,9 @@ echo -n "Testing Softlayer, Washington, DC..."
 slwdc=$( wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}' )
 echo " Complete"
 
+dcho
+echo "Starting CPU Tests!"
 
-echo "Beginning CPU Tests..."
 echo -n "Testing SHA256..."
 sha256=$(openssl speed sha256 2>/dev/null | tail -n +6)
 echo " Complete"
@@ -114,8 +115,11 @@ echo -n "Testing ECDHP256..."
 ecdhp256=$(openssl speed ecdhp256 2>/dev/null | tail -n +6)
 echo " Complete"
 
-echo "Beginning I/O Tests..."
+echo
+
+echo -n "Running I/O Tests..."
 io=$( ( dd if=/dev/zero of=test_$$ bs=64k count=16k conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' )
+echo " Complete"
 
 echo "Tests Complete!" 
 echo "Results Below!"
@@ -136,13 +140,13 @@ echo
 echo "==== Sytem Performance ===="
 echo
 
-echo "SHA256 Speed: $sha256"
-echo "MD5 Speed: $md5"
-echo "RSA Speed: $rsa"
-echo "AES-128-CBC Speed: $aes256cbc"
-echo "AES-256-CBC Speed: $aes256cbc"
-echo "ECDSAP256 Speed: $ecdsap256"
-echo "ECDHP256 Speed: $ecdhp256"
+echo "$sha256"
+echo "$md5"
+echo "$rsa"
+echo "$aes256cbc"
+echo "$aes256cbc"
+echo "$ecdsap256"
+echo "$ecdhp256"
 echo "I/O speed : $io"
 
 echo
