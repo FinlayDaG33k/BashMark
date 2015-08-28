@@ -98,7 +98,7 @@ slwdc=$(downloadfile http://speedtest.wdc01.softlayer.com/downloads/test100.zip)
 txtcomplete
 
 echo
-echo-n "Starting CPU Tests (This may take a while)..."
+echo -n "Starting CPU Tests (This may take a while)..."
 openssl=$(openssl speed ecdsap256 ecdhp256 aes-256-cbc aes-128-cbc rsa md5 sha256 2>/dev/null | tail -n +6)
 txtcomplete
 
