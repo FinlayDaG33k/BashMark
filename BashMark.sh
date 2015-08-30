@@ -35,7 +35,8 @@ echo "        -F | --full        Activates the full suite of Benchmarks (Overwri
 echo "        -h | --help        Shows this help dialog"
 echo "        -io| --io          Activates the IO (Harddrive) test"
 echo "        -nh| --no-host     Disables hostname in results"
-echo "        -o | --openssl     Activates the OpenSSL test (Requires OpenSSL to be installed)"
+echo "        -o | --openssl     Activates the OpenSSL test"
+echo "        -pi| --pi          Activates the Pi Test"
 echo "        -u | --username    Add your nickname/username to the results (Usage -u=[username] or --username=[username])"
 echo "        -v | --version     Display BashMark Version"
 }
@@ -64,13 +65,17 @@ case $i in
     OSSL="true"
     shift # past argument=value
     ;;
+    -pi|--pi)
+    pi_test="true"
+    shift # past argument=value
+    ;;
     -F|--full)
     download="true"
     io="true"
     OSSL="true"
     shift # past argument=value
     ;;
-    -u=*|--usernam=*)
+    -u=*|--username=*)
     username="${i#*=}"
     shift # past argument=value
     ;;
@@ -100,10 +105,14 @@ fi
 
 downloadfile(){
                wget -O /dev/null $1 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}'
-           }
-           
+           }          
 txtcomplete(){
               echo " Complete"
+}
+
+pi_test(){
+echo "Testing Pi... (This may take a while)"
+	pi_result=$((time echo "scale=5000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
 }
 
 downloadspeed(){
@@ -154,21 +163,18 @@ slwdc=$(downloadfile http://speedtest.wdc01.softlayer.com/downloads/test100.zip)
 txtcomplete
 echo
 }
-
 OSSL(){
-echo -n "Starting OpenSSL Tests (This may take a while)..."
+echo -n "Testing OpenSSL (This may take a while)..."
 openssl=$(openssl speed ecdsap256 ecdhp256 aes-256-cbc aes-128-cbc rsa md5 sha256 2>/dev/null | tail -n +6)
 txtcomplete
 
 echo
 }
-
 IO(){
 echo -n "Running I/O Tests..."
 io_result=$( ( dd if=/dev/zero of=test_$$ bs=64k count=16k conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' )
 txtcomplete
 }
-
 # Define Results
 downloadspeed_results(){
 echo "==== Download Speeds ===="
@@ -184,7 +190,6 @@ echo "Download speed from Softlayer, Seattle, WA: $slwa "
 echo "Download speed from Softlayer, San Jose, CA: $slsjc "
 echo "Download speed from Softlayer, Washington, DC: $slwdc "
 }
-
 system_performance(){
 echo "==== Sytem Performance ===="
 echo
@@ -194,6 +199,10 @@ fi
 
 if [ "${io}" = "true" ]; then
 echo "I/O speed : $io_result"
+fi
+
+if [ "${pi_test}" = "true" ]; then
+echo "Pi Time speed : $pi_result"
 fi
 
 echo
@@ -221,13 +230,22 @@ if [ "${io}" = "true" ]; then
 IO
 fi
 
+if [ "${pi_test}" = "true" ]; then
+pi_test
+fi
+
 if [ "${no-host}" != "true" ] ; then
 hostname=$(hostname -f)
 fi
 
+if [ -z "${username}"]; then
+username="Anonymous"
+fi
+
+
 # Tests complete
 
-if [ "${io}" = "true" ] || [ "${OSSL}" = "true" ] || [ "${download}" = "true" ]; then
+if [ "${io}" = "true" ] || [ "${OSSL}" = "true" ] || [ "${download}" = "true" ] || [ "${pi_test}" = "true" ]; then
 echo "Tests Complete!" 
 echo "Results Below!"
 echo 
@@ -250,14 +268,16 @@ echo "Total amount of swap : $swap MB"
 echo "System uptime : $up"
 echo
 
-if [ "${io}" = "true" ] || [ "${OSSL}" = "true" ] ; then
-echo "Meh"
+if [ "${io}" = "true" ] || [ "${OSSL}" = "true" ] || [ "${pi_test}" = "true" ] ; then
 system_performance
 fi
 
 if [ "${download}" = "true" ]; then
 downloadspeed_results
 fi
+
+echo
+echo
 echo "Hint: post your score to my forum, it's free!"
 echo "https://finlaydag33k.nl/da-foramz/forum/projects/bashmark/scores/"
 echo "==== Goodbye! ===="
