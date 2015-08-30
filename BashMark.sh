@@ -22,7 +22,7 @@ SOFTWARE.
 clear
 echo "========== FinlayDaG33k BashMark =========="
 echo
-_version='1.3'
+_version='1.2'
 
 # Help Dialog
 help_dialog(){
@@ -238,7 +238,7 @@ if [ "${no-host}" != "true" ] ; then
 hostname=$(hostname -f)
 fi
 
-if [ -z "${username}"]; then
+if [ -z "${username}" ]; then
 username="Anonymous"
 fi
 
