@@ -73,6 +73,7 @@ case $i in
     download="true"
     io="true"
     OSSL="true"
+    pi_test="true"
     shift # past argument=value
     ;;
     -u=*|--username=*)
@@ -111,9 +112,10 @@ txtcomplete(){
 }
 
 pi_test(){
-echo "Testing Pi... (This may take a while)"
+echo "Testing Pi (This may take a while)..."
 	pi_result=$((time echo "scale=5000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
 }
+txtcomplete
 
 downloadspeed(){
 # Test Download speeds
