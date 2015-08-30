@@ -22,7 +22,7 @@ SOFTWARE.
 clear
 echo "========== FinlayDaG33k BashMark =========="
 echo
-_version='1.2'
+_version='1.3'
 
 # Help Dialog
 help_dialog(){
