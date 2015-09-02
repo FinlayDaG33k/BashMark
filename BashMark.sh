@@ -22,7 +22,7 @@ SOFTWARE.
 clear
 echo "========== FinlayDaG33k BashMark =========="
 echo
-_version='1.2'
+_version='1.3.1'
 
 # Help Dialog
 help_dialog(){
@@ -114,8 +114,9 @@ txtcomplete(){
 pi_test(){
 echo "Testing Pi (This may take a while)..."
 	pi_result=$((time echo "scale=5000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
+	txtcomplete
 }
-txtcomplete
+
 
 downloadspeed(){
 # Test Download speeds
