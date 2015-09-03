@@ -22,9 +22,9 @@ SOFTWARE.
 clear
 echo "========== FinlayDaG33k BashMark =========="
 echo
-_version='1.3.1'
+_version='1.3.2'
 
-# Help Dialog
+# Declare all functions
 help_dialog(){
 echo "./BashMark.sh [options]"
 echo
@@ -40,7 +40,7 @@ echo "        -pi| --pi          Activates the Pi Test"
 echo "        -u | --username    Add your nickname/username to the results (Usage -u=[username] or --username=[username])"
 echo "        -v | --version     Display BashMark Version"
 }
-
+check_parameters(){
 # Check all parameters
 for i in "$@"
 do
@@ -92,32 +92,26 @@ case $i in
     ;;
 esac
 done
-
-
+}
+check_dependencies(){
 # Check if CURL and OpenSSL are installed
 CURL=$(which curl) || eval "echo 'Please install curl'; exit 1"
 
 if [ "${OSSL}" = "true" ]; then
 CURL=$(which openssl) || eval "echo 'Please install openssl'; exit 1"
 fi
-
-
-# Declare all functions
-
+}
 downloadfile(){
                wget -O /dev/null $1 2>&1 | awk '/\/dev\/null/ {speed=$3 $4} END {gsub(/\(|\)/,"",speed); print speed}'
            }          
 txtcomplete(){
               echo " Complete"
 }
-
 pi_test(){
 echo "Testing Pi (This may take a while)..."
-	pi_result=$((time echo "scale=5000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
+	pi_result=$((time echo "scale=1000000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
 	txtcomplete
 }
-
-
 downloadspeed(){
 # Test Download speeds
 
@@ -178,7 +172,6 @@ echo -n "Running I/O Tests..."
 io_result=$( ( dd if=/dev/zero of=test_$$ bs=64k count=16k conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' )
 txtcomplete
 }
-# Define Results
 downloadspeed_results(){
 echo "==== Download Speeds ===="
 echo 
@@ -210,7 +203,7 @@ fi
 
 echo
 }
-
+cpu_info(){
 # Get CPU Info
 cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo )
 cores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
@@ -218,9 +211,9 @@ freq=$( awk -F: ' /cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo )
 tram=$( free -m | awk 'NR==2 {print $2}' )
 swap=$( free -m | awk 'NR==4 {print $2}' )
 up=$(uptime|awk '{ $1=$2=$(NF-6)=$(NF-5)=$(NF-4)=$(NF-3)=$(NF-2)=$(NF-1)=$NF=""; print }')
-
+}
+benchmarks(){
 # Do the benchmarks
-
 if [ "${download}" = "true" ]; then
 downloadspeed
 fi
@@ -244,17 +237,16 @@ fi
 if [ -z "${username}" ]; then
 username="Anonymous"
 fi
-
-
+}
+test_complete(){
 # Tests complete
-
 if [ "${io}" = "true" ] || [ "${OSSL}" = "true" ] || [ "${download}" = "true" ] || [ "${pi_test}" = "true" ]; then
 echo "Tests Complete!" 
 echo "Results Below!"
 echo 
 fi
-
-
+}
+result_screen(){
 echo "==== System Information ===="
 echo
 echo "Username: ${username}"
@@ -284,3 +276,11 @@ echo
 echo "Hint: post your score to my forum, it's free!"
 echo "https://finlaydag33k.nl/da-foramz/forum/projects/bashmark/scores/"
 echo "==== Goodbye! ===="
+}
+
+check_parameters $@
+check_dependencies
+benchmarks
+test_complete
+cpu_info
+result_screen
