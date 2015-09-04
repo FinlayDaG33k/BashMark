@@ -121,7 +121,6 @@ echo "Testing Pi (This may take a while)..."
 }
 downloadspeed(){
 # Test Download speeds
-
 echo -n "Testing Cachefly..."
 cachefly=$(downloadfile http://cachefly.cachefly.net/100mb.test)
 txtcomplete
@@ -165,6 +164,7 @@ txtcomplete
 echo -n "Testing Softlayer, Washington, DC..."
 slwdc=$(downloadfile http://speedtest.wdc01.softlayer.com/downloads/test100.zip)
 txtcomplete
+
 echo
 }
 OSSL(){
@@ -182,16 +182,16 @@ txtcomplete
 downloadspeed_results(){
 echo "==== Download Speeds ===="
 echo 
-echo "Download speed from CacheFly: $cachefly "
-echo "Download speed from Coloat, Atlanta GA: $coloatatl "
-echo "Download speed from Linode, Tokyo, JP: $linodejp "
-echo "Download speed from i3d.net, Rotterdam, NL: $i3d"
-echo "Download speed from Linode, London, UK: $linodeuk "
-echo "Download speed from Leaseweb, Haarlem, NL: $leaseweb "
-echo "Download speed from Softlayer, Singapore: $slsg "
-echo "Download speed from Softlayer, Seattle, WA: $slwa "
-echo "Download speed from Softlayer, San Jose, CA: $slsjc "
-echo "Download speed from Softlayer, Washington, DC: $slwdc "
+echo "Download speed from CacheFly :                  $cachefly "
+echo "Download speed from Coloat, Atlanta GA :        $coloatatl "
+echo "Download speed from Linode, Tokyo, JP :         $linodejp "
+echo "Download speed from i3d.net, Rotterdam, NL :    $i3d"
+echo "Download speed from Linode, London, UK :        $linodeuk "
+echo "Download speed from Leaseweb, Haarlem, NL :     $leaseweb "
+echo "Download speed from Softlayer, Singapore :      $slsg "
+echo "Download speed from Softlayer, Seattle, WA :    $slwa "
+echo "Download speed from Softlayer, San Jose, CA :   $slsjc "
+echo "Download speed from Softlayer, Washington, DC : $slwdc "
 }
 system_performance(){
 echo "==== Sytem Performance ===="
@@ -210,13 +210,17 @@ fi
 
 echo
 }
-cpu_info(){
+system_info(){
 # Get CPU Info
 cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo )
 cores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
 freq=$( awk -F: ' /cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo )
-tram=$( free -m | awk 'NR==2 {print $2}' )
+tram_mb=$( free -m | awk 'NR==2 {print $2}' )
+tram_gb=$((tram_mb/1000))
 swap=$( free -m | awk 'NR==4 {print $2}' )
+if [ -z $swap ] ; then
+swap=0
+fi
 up=$(uptime|awk '{ $1=$2=$(NF-6)=$(NF-5)=$(NF-4)=$(NF-3)=$(NF-2)=$(NF-1)=$NF=""; print }')
 }
 benchmarks(){
@@ -256,27 +260,30 @@ fi
 result_screen(){
 echo "==== System Information ===="
 echo
-echo "Username: ${username}"
+echo "Username:                                       ${username}"
 if [ "${no-host}" != "true" ] ; then
-echo "Hostname: ${hostname}"
+echo "Hostname:                                       ${hostname}"
 fi
+echo -n "Date:                                           "
 date
-echo "BashMark Version: ${_version}"
-echo "CPU model : $cname"
-echo "Number of cores : $cores"
-echo "CPU frequency : $freq MHz"
-echo "Total amount of ram : $tram MB"
-echo "Total amount of swap : $swap MB"
-echo "System uptime : $up"
+echo "BashMark Version:                               ${_version}"
+echo "CPU model :                                    $cname"
+echo "Number of cores :                               $cores"
+echo "CPU frequency :                                $freq MHz"
+echo "Total amount of ram :                           $tram_mb MB ($tram_gb GB)"
+echo "Total amount of swap :                          $swap MB"
+echo "System uptime :                               $up"
 echo
+
+if [ "${download}" = "true" ]; then
+downloadspeed_results
+fi
 
 if [ "${io}" = "true" ] || [ "${OSSL}" = "true" ] || [ "${pi_test}" = "true" ] ; then
 system_performance
 fi
 
-if [ "${download}" = "true" ]; then
-downloadspeed_results
-fi
+
 
 echo
 echo
@@ -300,5 +307,5 @@ check_parameters $@
 check_dependencies
 benchmarks
 test_complete
-cpu_info
+system_info
 result_screen
