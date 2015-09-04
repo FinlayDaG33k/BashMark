@@ -22,11 +22,13 @@ SOFTWARE.
 clear
 echo "========== FinlayDaG33k BashMark =========="
 echo
-_version='1.3.2'
+_version='1.3.3'
+me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+
 
 # Declare all functions
 help_dialog(){
-echo "./BashMark.sh [options]"
+echo "./${me} [options]"
 echo
 echo
 echo "Options:"
@@ -38,6 +40,7 @@ echo "        -nh| --no-host     Disables hostname in results"
 echo "        -o | --openssl     Activates the OpenSSL test"
 echo "        -pi| --pi          Activates the Pi Test"
 echo "        -u | --username    Add your nickname/username to the results (Usage -u=[username] or --username=[username])"
+echo "        -U | --update      Updates BashMark with the Github version (overwrites current file even if they are identical!)"
 echo "        -v | --version     Display BashMark Version"
 }
 check_parameters(){
@@ -45,6 +48,10 @@ check_parameters(){
 for i in "$@"
 do
 case $i in
+    -U|--update)
+    update
+    exit 0
+    ;;
     -h|--help)
     help_dialog
     exit 0
@@ -276,6 +283,17 @@ echo
 echo "Hint: post your score to my forum, it's free!"
 echo "https://finlaydag33k.nl/da-foramz/forum/projects/bashmark/scores/"
 echo "==== Goodbye! ===="
+}
+update(){
+    read -p "Are you sure? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+
+wget https://raw.githubusercontent.com/FinlayDaG33k/BashMark/master/BashMark.sh -O ${me}
+then
+echo "Aborting"
+exit 0
+fi
 }
 
 check_parameters $@
