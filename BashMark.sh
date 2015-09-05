@@ -22,7 +22,7 @@ SOFTWARE.
 clear
 echo "========== FinlayDaG33k BashMark =========="
 echo
-_version='1.3.3'
+_version='1.4'
 me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 
 
@@ -39,6 +39,7 @@ echo "        -io| --io          Activates the IO (Harddrive) test"
 echo "        -nh| --no-host     Disables hostname in results"
 echo "        -o | --openssl     Activates the OpenSSL test"
 echo "        -pi| --pi          Activates the Pi Test"
+echo "        -s | --stress      Activates the Stresstest (Does not benchmark!)"
 echo "        -u | --username    Add your nickname/username to the results (Usage -u=[username] or --username=[username])"
 echo "        -U | --update      Updates BashMark with the Github version (overwrites current file even if they are identical!)"
 echo "        -v | --version     Display BashMark Version"
@@ -58,6 +59,10 @@ case $i in
     ;;
     -v|--version)
     echo "BashMark Version: ${_version}"
+    exit 0
+    ;;
+    -s|--stress)
+    stress_cpu
     exit 0
     ;;
     -d|--download)
@@ -301,6 +306,20 @@ then
 echo "Aborting"
 exit 0
 fi
+}
+stress_cpu(){
+    echo -n "Starting the stresstest!"
+    stress_amount=0
+while : ; do
+str="I-Love-Benchmarking"
+echo -n ${str}| md5sum | sha1sum | base64 | sha256sum > /dev/null
+let stress_amount=stress_amount+1
+ read -t 0.005 && break
+done
+
+echo "User exited!"
+echo "BashMark has done ${stress_amount} Hashing computations"
+exit 0
 }
 
 check_parameters $@

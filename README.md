@@ -16,6 +16,7 @@ View Results
 `        -io| --io          Activates the IO (Harddrive) test`  
 `        -nh| --no-host     Disables hostname in results`  
 `        -o | --openssl     Activates the OpenSSL test (Requires OpenSSL to be installed)`  
+`        -s | --stress      Activates the Stresstest (Does not benchmark!)`  
 `        -u | --username    Add your nickname/username to the results (Usage -u=[username] or --username=[username])`  
 `        -U | --update      Update to the current Github version (overwrites the current file even if the versions are the same)`  
 `        -v | --version     Display BashMark Version`  
