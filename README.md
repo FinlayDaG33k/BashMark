@@ -4,7 +4,7 @@ This tool has been made to test a VPS and now has been put on the Github for you
 
 # Usage
 `chmod +x BashMark.sh`  
-`./BashMark.sh [options]` OR `./BashMark.sh [options]| tee bashmark_results.txt`  
+`./BashMark.sh [options]`  
 Wait 5-10Minutes (Depends on your machine)  
 View Results  
 [Submit Results?](https://finlaydag33k.nl/da-foramz/forum/projects/bashmark/scores/)
