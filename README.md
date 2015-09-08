@@ -11,13 +11,14 @@ View Results
 
 #### Options
 `        -d | --download    Activates the Downloadspeed test (Requires an active Internet Connection)`  
-`        -F | --full        Activates the full suite of Benchmarks (Overwrites -d|-io|-o parameters)`  
+`        -F | --full        Activates the full suite of Benchmarks`  
+`        -f | --file        Outputs log to file (Usage -f=output.txt or --file=output.txt)`  
 `        -h | --help        Shows this help dialog`  
 `        -io| --io          Activates the IO (Harddrive) test`  
 `        -nh| --no-host     Disables hostname in results`  
 `        -o | --openssl     Activates the OpenSSL test (Requires OpenSSL to be installed)`  
 `        -s | --stress      Activates the Stresstest (Does not benchmark!)`  
-`        -u | --username    Add your nickname/username to the results (Usage -u=[username] or --username=[username])`  
+`        -u | --username    Add your nickname/username to the results (Usage -u=FinlayDaG33k or --username=FinlayDaG33k)`  
 `        -U | --update      Update to the current Github version (overwrites the current file even if the versions are the same)`  
 `        -v | --version     Display BashMark Version`  
 

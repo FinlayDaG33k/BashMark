@@ -20,27 +20,30 @@ SOFTWARE.
 '
 
 clear
-echo "========== FinlayDaG33k BashMark =========="
-echo
-_version='1.4'
+_version='1.5'
 me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 
 
 # Declare all functions
+header(){
+echo "========== FinlayDaG33k BashMark =========="
+echo
+}
 help_dialog(){
 echo "./${me} [options]"
 echo
 echo
 echo "Options:"
 echo "        -d | --download    Activates the Downloadspeed test (Requires an active Internet Connection)"
-echo "        -F | --full        Activates the full suite of Benchmarks (Overwrites -d|-io|-o parameters)"
+echo "        -F | --full        Activates the full suite of Benchmarks"
+echo "        -f | --file        Outputs log to file (Usage -f=output.txt or --file=output.txt)"
 echo "        -h | --help        Shows this help dialog"
 echo "        -io| --io          Activates the IO (Harddrive) test"
 echo "        -nh| --no-host     Disables hostname in results"
 echo "        -o | --openssl     Activates the OpenSSL test"
 echo "        -pi| --pi          Activates the Pi Test"
 echo "        -s | --stress      Activates the Stresstest (Does not benchmark!)"
-echo "        -u | --username    Add your nickname/username to the results (Usage -u=[username] or --username=[username])"
+echo "        -u | --username    Add your nickname/username to the results (Usage -u=FinlayDaG33k or --username=FinlayDaG33k)"
 echo "        -U | --update      Updates BashMark with the Github version (overwrites current file even if they are identical!)"
 echo "        -v | --version     Display BashMark Version"
 }
@@ -96,8 +99,12 @@ case $i in
     no-host="true"
     shift # past argument=value
     ;;
+    -f=*|--file=*)
+    output="${i#*=}"
+    file_output="true"
+    ;;
     *)
-            # unknown option
+      header
       echo "Invalid argument: ${i}"
       help_dialog
       exit 0
@@ -321,8 +328,17 @@ echo "User exited!"
 echo "BashMark has done ${stress_amount} Hashing computations"
 exit 0
 }
+write_to_file(){
+# Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
+exec > >(tee ${output})
+exec 2>&1
+}
 
 check_parameters $@
+header
+if [ "${file_output}" = "true" ] ; then
+write_to_file $@
+fi
 check_dependencies
 benchmarks
 test_complete
