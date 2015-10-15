@@ -20,7 +20,7 @@ SOFTWARE.
 '
 
 clear
-_version='1.6-Dev'
+_version='1.6'
 me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 
 
@@ -398,7 +398,7 @@ exec 2>&1
 
 
 header
-#update
+update
 check_parameters $@
 if [ "${file_output}" = "true" ] ; then
 write_to_file $@
