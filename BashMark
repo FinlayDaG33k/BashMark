@@ -328,7 +328,8 @@ echo -n "Date:                                           "
 date
 echo "BashMark Version:                               ${_version}"
 md5_current=$(echo -n ${me} | md5sum)
-md5_latest=$(wget --quiet https://raw.githubusercontent.com/FinlayDaG33k/BashMark/master/BashMark.sh -O verify | md5sum)
+md5_latest=$(curl -s https://raw.githubusercontent.com/FinlayDaG33k/BashMark/master/BashMark.sh | md5sum)
+echo $md5_latest
 echo -n "BashMark Sum:                                   ${md5_current}"
 if [ "${md5_current}" = "${md5_latest}" ] ; then
 echo " (Valid)"
