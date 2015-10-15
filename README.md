@@ -1,6 +1,7 @@
-# BashMark
+# BashMark-Dev
 Linux/UNIX Benchmarking tool in Bash  
 This tool has been made to test a VPS and now has been put on the Github for you to enjoy!
+Please note that this is the Dev branch, BashMark might be completely broken in this branch, use at own risk!
 
 # Usage
 `chmod +x BashMark.sh`  
