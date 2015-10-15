@@ -329,7 +329,6 @@ date
 echo "BashMark Version:                               ${_version}"
 md5_current=$(echo -n ${me} | md5sum)
 md5_latest=$(curl -s https://raw.githubusercontent.com/FinlayDaG33k/BashMark/master/BashMark.sh | md5sum)
-echo $md5_latest
 echo -n "BashMark Sum:                                   ${md5_current}"
 if [ "${md5_current}" = "${md5_latest}" ] ; then
 echo " (Valid)"
@@ -399,7 +398,7 @@ exec 2>&1
 
 
 header
-# update
+#update
 check_parameters $@
 if [ "${file_output}" = "true" ] ; then
 write_to_file $@
