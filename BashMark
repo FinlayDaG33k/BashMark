@@ -20,7 +20,7 @@ SOFTWARE.
 '
 
 clear
-_version='1.5'
+_version='1.6-Dev'
 me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 
 
@@ -75,8 +75,9 @@ case $i in
     fi
     shift # past argument=value
     ;;
-        -d|--download)
+    -d|--download)
     download="true"
+    download_test_count="10"
     shift # past argument=value
     ;;
     -io|--io)
@@ -133,6 +134,10 @@ downloadfile(){
 txtcomplete(){
               echo " Complete"
 }
+cooldown(){
+    echo "Coolingdown for 10 Seconds"
+    sleep 10
+}
 pi_test(){
 echo "Testing Pi (This may take a while)..."
 	pi_result=$((time echo "scale=1000000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
@@ -140,70 +145,81 @@ echo "Testing Pi (This may take a while)..."
 }
 downloadspeed(){
 # Test Download speeds
-if [ ${download_test_count} -gt 0 ] ; then
+if [ "${download_test_count}" -gt 0 ] ; then
 echo -n "Testing Cachefly..."
 cachefly=$(downloadfile http://cachefly.cachefly.net/100mb.test)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 1 ] ; then
+if [ "${download_test_count}" -gt 1 ] ; then
 echo -n "Testing Coloat, Atlanta, GA..."
 coloatatl=$(downloadfile http://speed.atl.coloat.com/100mb.test)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 2 ] ; then
+if [ "${download_test_count}" -gt 2 ] ; then
 echo -n "Testing Softlayer, Dallas, TX..."
 sldltx=$(downloadfile http://speedtest.dal05.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 3 ] ; then
+if [ "${download_test_count}" -gt 3 ] ; then
 echo -n "Testing Linode, Tokyo, JP..."
 linodejp=$(downloadfile http://speedtest.tokyo.linode.com/100MB-tokyo.bin)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 4 ] ; then
+if [ "${download_test_count}" -gt 4 ] ; then
 echo -n "Testing i3d.net, Rotterdam, NL..."
 i3d=$(downloadfile http://mirror.i3d.net/100mb.bin)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 5 ] ; then
+if [ "${download_test_count}" -gt 5 ] ; then
 echo -n "Testing Linode, London, UK..."
 linodeuk=$(downloadfile http://speedtest.london.linode.com/100MB-london.bin)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 6 ] ; then
+if [ "${download_test_count}" -gt 6 ] ; then
 echo -n "Testing Leaseweb, Haarlem, NL..."
 leaseweb=$(downloadfile http://mirror.leaseweb.com/speedtest/100mb.bin)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 7 ] ; then
+if [ "${download_test_count}" -gt 7 ] ; then
 echo -n "Testing Softlayer, Singapore..."
 slsg=$(downloadfile http://speedtest.sng01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 8 ] ; then
+if [ "${download_test_count}" -gt 8 ] ; then
 echo -n "Testing Softlayer, Seattle, WA..."
 slwa=$(downloadfile http://speedtest.sea01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 9 ] ; then
+if [ "${download_test_count}" -gt 9 ] ; then
 echo -n "Testing Softlayer, San Jose, CA..."
 slsjc=$(downloadfile http://speedtest.sjc01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
 fi
 
-if [ ${download_test_count} -gt 10 ] ; then
+if [ "${download_test_count}" -gt 10 ] ; then
 echo -n "Testing Softlayer, Washington, DC..."
 slwdc=$(downloadfile http://speedtest.wdc01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
 fi
 
 echo
@@ -212,13 +228,14 @@ OSSL(){
 echo -n "Testing OpenSSL (This may take a while)..."
 openssl=$(openssl speed ecdsap256 ecdhp256 aes-256-cbc aes-128-cbc rsa md5 sha256 2>/dev/null | tail -n +6)
 txtcomplete
-
+cooldown
 echo
 }
 IO(){
 echo -n "Running I/O Test on Local Drive..."
 io_result_hdd=$( ( dd bs=1M count=512 if=/dev/zero of=test conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' )
 txtcomplete
+cooldown
 }
 downloadspeed_results(){
 echo "==== Download Speeds ===="
