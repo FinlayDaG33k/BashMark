@@ -20,7 +20,7 @@ SOFTWARE.
 '
 
 clear
-_version='1.5'
+_version='1.6'
 me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 
 
@@ -68,8 +68,16 @@ case $i in
     stress_cpu
     exit 0
     ;;
+    -d=*|--download=*)
+    download_test_count=${i#*=}
+    if [ download_test_count -gt 0 ]; then
+    download="true"
+    fi
+    shift # past argument=value
+    ;;
     -d|--download)
     download="true"
+    download_test_count=11
     shift # past argument=value
     ;;
     -io|--io)
@@ -86,6 +94,7 @@ case $i in
     ;;
     -F|--full)
     download="true"
+    download_test_count=11
     io="true"
     OSSL="true"
     pi_test="true"
@@ -126,56 +135,93 @@ downloadfile(){
 txtcomplete(){
               echo " Complete"
 }
+cooldown(){
+    echo "Coolingdown for 10 Seconds"
+    sleep 10
+}
 pi_test(){
 echo "Testing Pi (This may take a while)..."
-	pi_result=$((time echo "scale=1000000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
+	pi_result=$((time echo "scale=32000000; 4*a(1)"| bc -lq) 2>&1 | grep real |  cut -f2)
 	txtcomplete
 }
 downloadspeed(){
 # Test Download speeds
+if [ "${download_test_count}" -gt 0 ] ; then
 echo -n "Testing Cachefly..."
 cachefly=$(downloadfile http://cachefly.cachefly.net/100mb.test)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 1 ] ; then
 echo -n "Testing Coloat, Atlanta, GA..."
 coloatatl=$(downloadfile http://speed.atl.coloat.com/100mb.test)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 2 ] ; then
 echo -n "Testing Softlayer, Dallas, TX..."
 sldltx=$(downloadfile http://speedtest.dal05.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 3 ] ; then
 echo -n "Testing Linode, Tokyo, JP..."
 linodejp=$(downloadfile http://speedtest.tokyo.linode.com/100MB-tokyo.bin)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 4 ] ; then
 echo -n "Testing i3d.net, Rotterdam, NL..."
 i3d=$(downloadfile http://mirror.i3d.net/100mb.bin)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 5 ] ; then
 echo -n "Testing Linode, London, UK..."
 linodeuk=$(downloadfile http://speedtest.london.linode.com/100MB-london.bin)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 6 ] ; then
 echo -n "Testing Leaseweb, Haarlem, NL..."
 leaseweb=$(downloadfile http://mirror.leaseweb.com/speedtest/100mb.bin)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 7 ] ; then
 echo -n "Testing Softlayer, Singapore..."
 slsg=$(downloadfile http://speedtest.sng01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 8 ] ; then
 echo -n "Testing Softlayer, Seattle, WA..."
 slwa=$(downloadfile http://speedtest.sea01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 9 ] ; then
 echo -n "Testing Softlayer, San Jose, CA..."
 slsjc=$(downloadfile http://speedtest.sjc01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
+fi
 
+if [ "${download_test_count}" -gt 10 ] ; then
 echo -n "Testing Softlayer, Washington, DC..."
 slwdc=$(downloadfile http://speedtest.wdc01.softlayer.com/downloads/test100.zip)
 txtcomplete
+cooldown
+fi
 
 echo
 }
@@ -183,13 +229,14 @@ OSSL(){
 echo -n "Testing OpenSSL (This may take a while)..."
 openssl=$(openssl speed ecdsap256 ecdhp256 aes-256-cbc aes-128-cbc rsa md5 sha256 2>/dev/null | tail -n +6)
 txtcomplete
-
+cooldown
 echo
 }
 IO(){
-echo -n "Running I/O Tests..."
-io_result=$( ( dd if=/dev/zero of=test_$$ bs=64k count=16k conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' )
+echo -n "Running I/O Test on Local Drive..."
+io_result_hdd=$( ( dd bs=1M count=512 if=/dev/zero of=test conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' )
 txtcomplete
+cooldown
 }
 downloadspeed_results(){
 echo "==== Download Speeds ===="
@@ -213,7 +260,7 @@ echo "$openssl"
 fi
 
 if [ "${io}" = "true" ]; then
-echo "I/O speed : $io_result"
+echo "I/O speed : $io_result_hdd"
 fi
 
 if [ "${pi_test}" = "true" ]; then
@@ -260,6 +307,8 @@ fi
 if [ -z "${username}" ]; then
 username="Anonymous"
 fi
+
+
 }
 test_complete(){
 # Tests complete
@@ -279,6 +328,14 @@ fi
 echo -n "Date:                                           "
 date
 echo "BashMark Version:                               ${_version}"
+md5_current=$(echo -n ${me} | md5sum)
+md5_latest=$(curl -s https://raw.githubusercontent.com/FinlayDaG33k/BashMark/master/BashMark.sh | md5sum)
+echo -n "BashMark Sum:                                   ${md5_current}"
+if [ "${md5_current}" = "${md5_latest}" ] ; then
+echo " (Valid)"
+else
+echo " (Invalid)"
+fi
 echo "CPU model :                                    $cname"
 echo "Number of cores :                               $cores"
 echo "CPU frequency :                                $freq MHz"
@@ -304,15 +361,21 @@ echo "https://finlaydag33k.nl/da-foramz/forum/projects/bashmark/scores/"
 echo "==== Goodbye! ===="
 }
 update(){
-    read -p "Are you sure? " -n 1 -r
-echo    # (optional) move to a new line
-if [[ $REPLY =~ ^[Yy]$ ]]
-
-wget https://raw.githubusercontent.com/FinlayDaG33k/BashMark/master/BashMark.sh -O ${me}
-then
-echo "Aborting"
-exit 0
-fi
+    echo "A new version is available on the github, Auto-Updating!"
+    if ! wget --quiet https://raw.githubusercontent.com/FinlayDaG33k/BashMark/master/BashMark.sh -O ${me} ; then
+    echo "Failed: Error while trying to get new version!"
+    exit 1
+    else
+    echo "Update succeeded! "
+    read -p "Do you want to start BashMark? " -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ $REPLY =~ ^[Yy]$ ]] ; then
+    bash ${me}
+    else
+    echo "Exitting"
+    exit 0
+    fi
+    fi
 }
 stress_cpu(){
     echo -n "Starting the stresstest!"
@@ -334,8 +397,10 @@ exec > >(tee ${output})
 exec 2>&1
 }
 
-check_parameters $@
+
 header
+update
+check_parameters $@
 if [ "${file_output}" = "true" ] ; then
 write_to_file $@
 fi
